@@ -328,17 +328,18 @@ function analyticsOn($analytics) {
   };
 }
 
-function exceptionTrack($provide) {
-  $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
-    var excTrack = function (error, cause) {
-      var result = $delegate(error, cause);
-      var $analytics = $injector.get('$analytics');
-      if ($analytics.settings.trackExceptions) {
-        $analytics.exceptionTrack(error, cause);
+ function exceptionTrack($provide) {
+
+    $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
+      return function (error, cause) {
+        var result = $delegate(error, cause);
+        var $analytics = $injector.get('$analytics');
+        if ($analytics.settings.trackExceptions) {
+          $analytics.exceptionTrack(error, cause);
+        }
+        return result;
       }
-      return result;
-    };
-  }]);
+    }]);
 }
 
 function isCommand(element) {
